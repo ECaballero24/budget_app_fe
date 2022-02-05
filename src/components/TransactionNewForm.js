@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
-import axios from "axios";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-function TransactionEditForm() {
-  let { index } = useParams();
+const API_URL = process.env.REACT_APP_API_URL;
 
+function TransactionNewForm() {
   const [transaction, setTransaction] = useState({
     date: "",
     name: "",
@@ -18,34 +17,23 @@ function TransactionEditForm() {
   const handleTextChange = (event) => {
     setTransaction({ ...transaction, [event.target.id]: event.target.value });
   };
-
-  useEffect(() => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
     axios
-      .get(`${process.env.REACT_APP_API_URL}/transactions/${index}`)
+      .post(`${process.env.REACT_APP_API_URL}/transactions`, transaction)
       .then((res) => {
-        setTransaction(res.data);
+        navigate("/transactions");
       })
       .catch((err) => {
-        navigate("/not-found");
+        console.log(err);
       });
-  }, [index]);
-
-const handleSubmit = (event) => {
-    event.preventDefault();
-    axios.put(`${process.env.REACT_APP_API_URL}/transactions/${index}`, transaction)
-    .then((res)=>{
-      navigate(`/transactions`);
-    }).catch((err)=>{
-      console.log(err);
-    })
   };
 
-
-return (
+  return (
     <div>
       <form onSubmit={handleSubmit}>
         <label htmlFor="date">Date</label>
-        <input className="form-control"
+        <input
           id="date"
           value={transaction.date}
           type="text"
@@ -54,7 +42,7 @@ return (
           required
         />
         <label htmlFor="name">Name</label>
-        <input className="form-control"
+        <input
           id="name"
           value={transaction.name}
           type="text"
@@ -63,7 +51,7 @@ return (
           required
         />
         <label htmlFor="amount">Amount</label>
-        <input className="form-control"
+        <input
           id="amount"
           value={transaction.amount}
           type="number"
@@ -72,7 +60,7 @@ return (
           required
         />
         <label htmlFor="from">From</label>
-        <input className="form-control"
+        <input
           id="from"
           value={transaction.from}
           type="text"
@@ -81,13 +69,12 @@ return (
           required
         />
 
-        <input type="submit" />
+        <button className="submit-button" value="submit" type="submit">
+          submit
+        </button>
       </form>
-      <Link to={`/transactions/${index}`}>
-      <button variant="outline-primary">Back</button>
-      </Link>
     </div>
   );
 }
 
-export default TransactionEditForm;
+export default TransactionNewForm;
