@@ -13,7 +13,7 @@ function Transactions() {
       .get(API_URL + "/transactions")
       .then((res) => {
         setTransactions(res.data);
-        // console.log(res.data);
+        console.log(res.data);
       })
       .catch((err) => {
         throw err;
